@@ -1,0 +1,18 @@
+import os
+
+configfile: "workflow/config.yaml"
+
+# Global variables
+PROJECT = config["project_dir"]
+SAMPLES = config["samples"]
+
+rule all:
+    input:
+        expand(
+            os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.html"),
+            sample=SAMPLES
+        ),
+        os.path.join(PROJECT, config["results"]["multiqc"], "multiqc_report.html"),
+        os.path.join(PROJECT, config["results"]["counts"], "counts.txt"),
+        os.path.join(PROJECT, config["results"]["deseq2"], "deseq2_results.csv")
+
