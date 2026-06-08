@@ -16,3 +16,22 @@ rule all:
         os.path.join(PROJECT, config["results"]["counts"], "counts.txt"),
         os.path.join(PROJECT, config["results"]["deseq2"], "deseq2_results.csv")
 
+
+rule fastqc:
+    input:
+        os.path.join(PROJECT, config["data"]["raw"], "{sample}.fastq.gz")
+    output:
+        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.html"),
+        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.zip")
+    threads: 4
+    shell:
+        "fastqc {input} --outdir " + os.path.join(PROJECT, config["results"]["fastqc"]) + " --threads {threads}"
+
+rule trim:
+    input:
+        os.path.join(PROJECT, config["data"]["raw"], "{sample}.fastq.gz")
+    output:
+        os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fastq.gz")
+    threads: 4
+    shell:
+        "trim_galore {input} --outdir " + os.path.join(PROJECT, config["results"]["trimmed"]) + " --cores {threads}"
