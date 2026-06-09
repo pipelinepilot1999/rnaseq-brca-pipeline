@@ -35,3 +35,34 @@ rule trim:
     threads: 4
     shell:
         "trim_galore {input} --outdir " + os.path.join(PROJECT, config["results"]["trimmed"]) + " --cores {threads}"
+
+rule star_index:
+    input:
+        fasta = os.path.join(PROJECT, config["genome"]["fasta"]),
+        gtf   = os.path.join(PROJECT, config["genome"]["gtf"])
+    output:
+        directory(os.path.join(PROJECT, config["star"]["genome_dir"]))
+    threads: 4
+    shell:
+        "STAR --runMode genomeGenerate "
+        "--genomeDir " + os.path.join(PROJECT, config["star"]["genome_dir"]) + " "
+        "--genomeFastaFiles {input.fasta} "
+        "--sjdbGTFfile {input.gtf} "
+        "--runThreadN {threads}"
+
+rule star_align:
+    input:
+        reads = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fastq.gz"),
+        index = os.path.join(PROJECT, config["star"]["genome_dir"])
+    output:
+        bam = os.path.join(PROJECT, config["results"]["star"], "{sample}_Aligned.sortedByCoord.out.bam"),
+        log = os.path.join(PROJECT, config["results"]["star"], "{sample}_Log.final.out")
+    threads: 4
+    shell:
+        "STAR --runMode alignReads "
+        "--genomeDir {input.index} "
+        "--readFilesIn {input.reads} "
+        "--readFilesCommand zcat "
+        "--outSAMtype BAM SortedByCoordinate "
+        "--outFileNamePrefix " + os.path.join(PROJECT, config["results"]["star"], "{wildcards.sample}_") + " "
+        "--runThreadN {threads}"
