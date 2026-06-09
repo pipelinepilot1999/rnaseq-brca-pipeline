@@ -83,3 +83,14 @@ rule featurecounts:
         "-a {input.gtf} "
         "-o {output} "
         "{input.bams}"
+
+rule multiqc:
+    input:
+        fastqc = expand(os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.zip"), sample=SAMPLES),
+        star   = expand(os.path.join(PROJECT, config["results"]["star"], "{sample}_Log.final.out"), sample=SAMPLES)
+    output:
+        os.path.join(PROJECT, config["results"]["multiqc"], "multiqc_report.html")
+    shell:
+        "multiqc " + os.path.join(PROJECT, config["results"]["fastqc"]) + " " +
+        os.path.join(PROJECT, config["results"]["star"]) + " " +
+        "--outdir " + os.path.join(PROJECT, config["results"]["multiqc"])
