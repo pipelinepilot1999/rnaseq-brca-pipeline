@@ -94,3 +94,12 @@ rule multiqc:
         "multiqc " + os.path.join(PROJECT, config["results"]["fastqc"]) + " " +
         os.path.join(PROJECT, config["results"]["star"]) + " " +
         "--outdir " + os.path.join(PROJECT, config["results"]["multiqc"])
+
+rule deseq2:
+    input:
+        counts   = os.path.join(PROJECT, config["results"]["counts"], "counts.txt"),
+        metadata = os.path.join(PROJECT, config["data"]["raw"], "metadata.csv")
+    output:
+        os.path.join(PROJECT, config["results"]["deseq2"], "deseq2_results.csv")
+    shell:
+        "Rscript workflow/scripts/deseq2.R {input.counts} {input.metadata} {output}"
