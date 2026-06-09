@@ -66,3 +66,20 @@ rule star_align:
         "--outSAMtype BAM SortedByCoordinate "
         "--outFileNamePrefix " + os.path.join(PROJECT, config["results"]["star"], "{wildcards.sample}_") + " "
         "--runThreadN {threads}"
+
+rule featurecounts:
+    input:
+        bams = expand(os.path.join(PROJECT, config["results"]["star"], "{sample}_Aligned.sortedByCoord.out.bam"), sample=SAMPLES),
+        gtf  = os.path.join(PROJECT, config["genome"]["gtf"])
+    output:
+        os.path.join(PROJECT, config["results"]["counts"], "counts.txt")
+    threads: 4
+    params:
+        strand = config["featurecounts"]["strand"]
+    shell:
+        "featureCounts "
+        "-T {threads} "
+        "-s {params.strand} "
+        "-a {input.gtf} "
+        "-o {output} "
+        "{input.bams}"
