@@ -1,7 +1,7 @@
 # RNA-seq Pipeline Configuration
 # Project: Luminal A vs TNBC Differential Expression
 # Phase 1: GSE60450 test dataset
-project_dir: "/Users/sathviksai/rnaseq-brca-pipeline"
+project_dir: "/home/ubuntu/rnaseq-brca-pipeline"
 data:
   raw: "data/raw"
   genome: "data/genome"
@@ -16,7 +16,7 @@ results:
 genome:
   name: "mm10"
   fasta: "data/genome/mm10.fa"
-  gtf: "data/annotation/mm10.gtf"
+  gtf: "data/annotation/mm10.ncbiRefSeq.gtf"
 star:
   threads: 4
   genome_dir: "data/genome/star_index"
@@ -26,9 +26,9 @@ featurecounts:
 samples:
   - "SRR1552444"  # basal mammary sample 1
   - "SRR1552445"  # basal mammary sample 2
-  - "SRR1552446"  # basal mammary sample 3
+ # - "SRR1552446"  # basal mammary sample 3
   - "SRR1552447"  # luminal mammary sample 1
   - "SRR1552448"  # luminal mammary sample 2
-  - "SRR1552449"  # luminal mammary sample 3
+ # - "SRR1552449"  # luminal mammary sample 3
 
 

@@ -31,10 +31,10 @@ rule trim:
     input:
         os.path.join(PROJECT, config["data"]["raw"], "{sample}.fastq.gz")
     output:
-        os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fastq.gz")
+        os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fq.gz")
     threads: 4
     shell:
-        "trim_galore {input} --outdir " + os.path.join(PROJECT, config["results"]["trimmed"]) + " --cores {threads}"
+        "trim_galore {input} --output_dir " + os.path.join(PROJECT, config["results"]["trimmed"]) + " --cores {threads}"
 
 rule star_index:
     input:
@@ -52,7 +52,7 @@ rule star_index:
 
 rule star_align:
     input:
-        reads = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fastq.gz"),
+        reads = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fq.gz"),
         index = os.path.join(PROJECT, config["star"]["genome_dir"])
     output:
         bam = os.path.join(PROJECT, config["results"]["star"], "{sample}_Aligned.sortedByCoord.out.bam"),

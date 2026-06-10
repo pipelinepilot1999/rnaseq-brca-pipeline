@@ -26,8 +26,10 @@ counts <- read.table(counts_file,
                      row.names = 1)
 
 # Keep only sample columns (remove annotation columns)
-counts <- counts[, 7:ncol(counts)]
+counts <- counts[, 6:ncol(counts)]
 
+# Fix column names — strip full path and lwts keep sample ID only
+colnames(counts) <- gsub("results.star.(.*?)_Aligned.*", "\\1", colnames(counts))
 metadata <- read.csv(metadata_file,
                      row.names = 1)
 
