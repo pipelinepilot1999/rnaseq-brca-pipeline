@@ -216,3 +216,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Large data files
+data/raw/*.fastq.gz
+data/genome/*.fa
+data/genome/star_index/
+data/annotation/*.gtf
+
+# Results (too large for GitHub)
+results/star/*.bam
+results/trimmed/*.fq.gz
+results/fastqc/*.zip
+
+# Snakemake
+.snakemake/
+nohup.out
