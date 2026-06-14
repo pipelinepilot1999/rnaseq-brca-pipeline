@@ -1,11 +1,10 @@
-# RNA-seq Pipeline Configuration
-# Project: Luminal A vs TNBC Differential Expression
-# Phase 1: GSE60450 test dataset
 project_dir: "/home/ubuntu/rnaseq-brca-pipeline"
+
 data:
   raw: "data/raw"
   genome: "data/genome"
   annotation: "data/annotation"
+
 results:
   fastqc: "results/fastqc"
   trimmed: "results/trimmed"
@@ -13,22 +12,38 @@ results:
   counts: "results/counts"
   multiqc: "results/multiqc"
   deseq2: "results/deseq2"
+
 genome:
-  name: "mm10"
-  fasta: "data/genome/mm10.fa"
-  gtf: "data/annotation/mm10.ncbiRefSeq.gtf"
+  name: "hg38"
+  fasta: "data/genome/hg38.fa"
+  gtf: "data/annotation/hg38.gtf"
+
 star:
-  threads: 4
-  genome_dir: "data/genome/star_index"
+  threads: 8
+  genome_dir: "data/genome/star_index_hg38"
+
 featurecounts:
-  threads: 4
-  strand: 0
+  threads: 8
+  strand: 2
+
 samples:
-  - "SRR1552444"  # basal mammary sample 1
-  - "SRR1552445"  # basal mammary sample 2
- # - "SRR1552446"  # basal mammary sample 3
-  - "SRR1552447"  # luminal mammary sample 1
-  - "SRR1552448"  # luminal mammary sample 2
- # - "SRR1552449"  # luminal mammary sample 3
-
-
+  - SRR1313171
+  - SRR1313170
+  - SRR1313168
+  - SRR1313164
+  - SRR1313172
+  - SRR1313136
+  - SRR1313173
+  - SRR1313169
+  - SRR1313163
+  - SRR1313134
+  - SRR1313122
+  - SRR1313129
+  - SRR1313111
+  - SRR1313119
+  - SRR1313093
+  - SRR1313090
+  - SRR1313104
+  - SRR1313098
+  - SRR1313112
+  - SRR1313125

@@ -2,39 +2,59 @@ import os
 
 configfile: "workflow/config.yaml"
 
-# Global variables
 PROJECT = config["project_dir"]
 SAMPLES = config["samples"]
 
 rule all:
     input:
-        expand(
-            os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.html"),
-            sample=SAMPLES
-        ),
         os.path.join(PROJECT, config["results"]["multiqc"], "multiqc_report.html"),
         os.path.join(PROJECT, config["results"]["counts"], "counts.txt"),
         os.path.join(PROJECT, config["results"]["deseq2"], "deseq2_results.csv")
 
 
-rule fastqc:
-    input:
-        os.path.join(PROJECT, config["data"]["raw"], "{sample}.fastq.gz")
+rule download:
     output:
-        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.html"),
-        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.zip")
+        r1 = temp(os.path.join(PROJECT, config["data"]["raw"], "{sample}_1.fastq.gz")),
+        r2 = temp(os.path.join(PROJECT, config["data"]["raw"], "{sample}_2.fastq.gz"))
+    params:
+        outdir = os.path.join(PROJECT, config["data"]["raw"]),
+        tmpdir = os.path.join(PROJECT, config["data"]["raw"], "tmp")
     threads: 4
     shell:
-        "fastqc {input} --outdir " + os.path.join(PROJECT, config["results"]["fastqc"]) + " --threads {threads}"
+        "mkdir -p {params.tmpdir} && "
+        "fasterq-dump --split-files --outdir {params.outdir} --temp {params.tmpdir} --threads {threads} {wildcards.sample} && "
+        "gzip {params.outdir}/{wildcards.sample}_1.fastq && "
+        "gzip {params.outdir}/{wildcards.sample}_2.fastq"
+
+
+rule fastqc:
+    input:
+        r1 = os.path.join(PROJECT, config["data"]["raw"], "{sample}_1.fastq.gz"),
+        r2 = os.path.join(PROJECT, config["data"]["raw"], "{sample}_2.fastq.gz")
+    output:
+        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_1_fastqc.zip"),
+        os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_2_fastqc.zip")
+    params:
+        outdir = os.path.join(PROJECT, config["results"]["fastqc"])
+    threads: 4
+    shell:
+        "fastqc {input.r1} {input.r2} --outdir {params.outdir} --threads {threads}"
+
 
 rule trim:
     input:
-        os.path.join(PROJECT, config["data"]["raw"], "{sample}.fastq.gz")
+        r1 = os.path.join(PROJECT, config["data"]["raw"], "{sample}_1.fastq.gz"),
+        r2 = os.path.join(PROJECT, config["data"]["raw"], "{sample}_2.fastq.gz")
     output:
-        os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fq.gz")
+        r1 = temp(os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_1_val_1.fq.gz")),
+        r2 = temp(os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_2_val_2.fq.gz"))
+    params:
+        outdir = os.path.join(PROJECT, config["results"]["trimmed"])
     threads: 4
     shell:
-        "trim_galore {input} --output_dir " + os.path.join(PROJECT, config["results"]["trimmed"]) + " --cores {threads}"
+        "trim_galore --paired {input.r1} {input.r2} "
+        "--output_dir {params.outdir} --cores {threads}"
+
 
 rule star_index:
     input:
@@ -42,30 +62,39 @@ rule star_index:
         gtf   = os.path.join(PROJECT, config["genome"]["gtf"])
     output:
         directory(os.path.join(PROJECT, config["star"]["genome_dir"]))
-    threads: 4
+    params:
+        outdir = os.path.join(PROJECT, config["star"]["genome_dir"])
+    threads: 8
     shell:
+        "mkdir -p {params.outdir} && "
         "STAR --runMode genomeGenerate "
-        "--genomeDir " + os.path.join(PROJECT, config["star"]["genome_dir"]) + " "
+        "--genomeDir {params.outdir} "
         "--genomeFastaFiles {input.fasta} "
         "--sjdbGTFfile {input.gtf} "
+        "--sjdbOverhang 99 "
         "--runThreadN {threads}"
+
 
 rule star_align:
     input:
-        reads = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_trimmed.fq.gz"),
+        r1    = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_1_val_1.fq.gz"),
+        r2    = os.path.join(PROJECT, config["results"]["trimmed"], "{sample}_2_val_2.fq.gz"),
         index = os.path.join(PROJECT, config["star"]["genome_dir"])
     output:
         bam = os.path.join(PROJECT, config["results"]["star"], "{sample}_Aligned.sortedByCoord.out.bam"),
         log = os.path.join(PROJECT, config["results"]["star"], "{sample}_Log.final.out")
-    threads: 4
+    params:
+        prefix = os.path.join(PROJECT, config["results"]["star"], "{sample}_")
+    threads: 8
     shell:
         "STAR --runMode alignReads "
         "--genomeDir {input.index} "
-        "--readFilesIn {input.reads} "
+        "--readFilesIn {input.r1} {input.r2} "
         "--readFilesCommand zcat "
         "--outSAMtype BAM SortedByCoordinate "
-        "--outFileNamePrefix " + os.path.join(PROJECT, config["results"]["star"], "{wildcards.sample}_") + " "
+        "--outFileNamePrefix {params.prefix} "
         "--runThreadN {threads}"
+
 
 rule featurecounts:
     input:
@@ -73,27 +102,35 @@ rule featurecounts:
         gtf  = os.path.join(PROJECT, config["genome"]["gtf"])
     output:
         os.path.join(PROJECT, config["results"]["counts"], "counts.txt")
-    threads: 4
     params:
         strand = config["featurecounts"]["strand"]
+    threads: 8
     shell:
         "featureCounts "
         "-T {threads} "
+        "-p --countReadPairs "
         "-s {params.strand} "
         "-a {input.gtf} "
         "-o {output} "
         "{input.bams}"
 
+
 rule multiqc:
     input:
-        fastqc = expand(os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_fastqc.zip"), sample=SAMPLES),
-        star   = expand(os.path.join(PROJECT, config["results"]["star"], "{sample}_Log.final.out"), sample=SAMPLES)
+        fastqc = expand(os.path.join(PROJECT, config["results"]["fastqc"], "{sample}_1_fastqc.zip"), sample=SAMPLES),
+        star   = expand(os.path.join(PROJECT, config["results"]["star"], "{sample}_Log.final.out"), sample=SAMPLES),
+        counts = os.path.join(PROJECT, config["results"]["counts"], "counts.txt")
     output:
         os.path.join(PROJECT, config["results"]["multiqc"], "multiqc_report.html")
+    params:
+        fastqc_dir = os.path.join(PROJECT, config["results"]["fastqc"]),
+        star_dir   = os.path.join(PROJECT, config["results"]["star"]),
+        counts_dir = os.path.join(PROJECT, config["results"]["counts"]),
+        outdir     = os.path.join(PROJECT, config["results"]["multiqc"])
     shell:
-        "multiqc " + os.path.join(PROJECT, config["results"]["fastqc"]) + " " +
-        os.path.join(PROJECT, config["results"]["star"]) + " " +
-        "--outdir " + os.path.join(PROJECT, config["results"]["multiqc"])
+        "multiqc {params.fastqc_dir} {params.star_dir} {params.counts_dir} "
+        "--outdir {params.outdir} --force"
+
 
 rule deseq2:
     input:

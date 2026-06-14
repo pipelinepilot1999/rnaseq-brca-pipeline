@@ -1,0 +1,15 @@
+Status	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313171_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313170_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313168_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313164_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313172_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313136_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313173_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313169_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313163_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313134_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313122_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313129_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313111_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313119_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313093_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313090_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313104_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313098_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313112_Aligned.sortedByCoord.out.bam	/home/ubuntu/rnaseq-brca-pipeline/results/star/SRR1313125_Aligned.sortedByCoord.out.bam
+Assigned	12972079	12213892	14964661	13518893	13161876	12894190	14067733	18762098	17912101	16024609	14223321	14988753	13236567	15332282	11300435	14182147	14596055	12927759	16075800	16299884
+Unassigned_Unmapped	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_Read_Type	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_MultiMapping	12541413	12698413	15147407	16323762	47443207	19308939	20696521	15613333	18299337	30156930	17687273	14049588	12624623	13486415	13826538	12917399	13125062	15267183	13368507	17752688
+Unassigned_Secondary	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_NoFeatures	19470669	22841482	22623758	25725313	19332409	24402581	22951960	24440620	28307152	29491901	23150866	23266396	25033577	21228223	25346347	21071701	22917862	22870066	24724249	26129378
+Unassigned_Overlapping_Length	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Unassigned_Ambiguity	290871	211689	222846	266118	252633	210804	224363	277297	274094	341319	217843	258067	224809	244784	215971	229815	223366	238598	279410	269433
