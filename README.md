@@ -8,7 +8,7 @@ Breast Cancer (TNBC) and Estrogen-Receptor-Positive (ER+) — from raw sequencin
 reads through to differentially expressed genes and biological pathway enrichment.
 
 The pipeline was validated in two phases: a mouse mammary dataset with a known
-published result (Phase 1), followed by a human breast cancer dataset (Phase 3).
+published result (Phase 1), followed by a human breast cancer dataset in the latter phase.
 This README documents the human analysis.
 
 ---
